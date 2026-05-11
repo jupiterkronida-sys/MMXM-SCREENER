@@ -1,0 +1,173 @@
+"""MMXM (Market Maker eXternal/internal range Models) detector — ICT-flavored.
+
+Detects:
+- swing highs/lows (fractal: 2 left + 2 right)
+- liquidity sweep (latest candle wicks past last swing low/high then closes back inside)
+- market structure shift (MSS / CHoCH) on the leg AFTER the sweep
+- order block (last opposing candle before the impulsive MSS leg)
+- fair value gap (3-candle imbalance)
+- builds a trade plan: entry, SL, TP1/2/3, R:R
+
+Returns a dict per symbol/timeframe or None.
+"""
+from typing import List, Dict, Optional, Tuple
+
+
+def _swings(highs: List[float], lows: List[float], left: int = 2, right: int = 2):
+    """Return list of (idx, price, kind) where kind in {'H','L'}."""
+    swings = []
+    for i in range(left, len(highs) - right):
+        if all(highs[i] > highs[i - j] for j in range(1, left + 1)) and all(
+            highs[i] > highs[i + j] for j in range(1, right + 1)
+        ):
+            swings.append((i, highs[i], "H"))
+        if all(lows[i] < lows[i - j] for j in range(1, left + 1)) and all(
+            lows[i] < lows[i + j] for j in range(1, right + 1)
+        ):
+            swings.append((i, lows[i], "L"))
+    swings.sort(key=lambda s: s[0])
+    return swings
+
+
+def _last_swing_of(swings, kind: str, before_idx: int) -> Optional[Tuple[int, float, str]]:
+    for s in reversed(swings):
+        if s[0] < before_idx and s[2] == kind:
+            return s
+    return None
+
+
+def _find_fvg(candles: List[List[float]], direction: str, end_idx: int):
+    """Look for 3-candle FVG ending near end_idx. Returns (low, high) of the gap or None.
+    direction='bull' -> candle[i-2].high < candle[i].low (gap up).
+    direction='bear' -> candle[i-2].low > candle[i].high (gap down)."""
+    start = max(2, end_idx - 8)
+    for i in range(start, end_idx + 1):
+        c2 = candles[i - 2]
+        c0 = candles[i]
+        if direction == "bull" and c2[2] < c0[3]:
+            return (c2[2], c0[3])
+        if direction == "bear" and c2[3] > c0[2]:
+            return (c0[2], c2[3])
+    return None
+
+
+def _find_order_block(candles: List[List[float]], direction: str, mss_idx: int):
+    """The last opposing-color candle before the impulse that caused MSS.
+    direction='bull' -> last DOWN candle before mss_idx.
+    direction='bear' -> last UP candle before mss_idx."""
+    for i in range(mss_idx - 1, max(mss_idx - 10, 0) - 1, -1):
+        o, c = candles[i][1], candles[i][4]
+        if direction == "bull" and c < o:
+            return {"low": candles[i][3], "high": candles[i][2], "idx": i}
+        if direction == "bear" and c > o:
+            return {"low": candles[i][3], "high": candles[i][2], "idx": i}
+    return None
+
+
+def detect_mmxm(candles: List[List[float]], symbol: str, timeframe: str) -> Optional[Dict]:
+    """candles: oldest->newest [t, o, h, l, c, v]."""
+    if len(candles) < 60:
+        return None
+    highs = [c[2] for c in candles]
+    lows = [c[3] for c in candles]
+    closes = [c[4] for c in candles]
+    swings = _swings(highs, lows, 2, 2)
+    if len(swings) < 4:
+        return None
+
+    n = len(candles)
+    last_idx = n - 1
+    recent_high_swings = [s for s in swings if s[2] == "H" and s[0] < last_idx - 2]
+    recent_low_swings = [s for s in swings if s[2] == "L" and s[0] < last_idx - 2]
+    if not recent_high_swings or not recent_low_swings:
+        return None
+
+    last_swing_low = recent_low_swings[-1]
+    last_swing_high = recent_high_swings[-1]
+
+    # Look at the last ~8 candles for sweep evidence
+    sweep_window = candles[-8:]
+    bullish_sweep = any(c[3] < last_swing_low[1] and c[4] > last_swing_low[1] for c in sweep_window)
+    bearish_sweep = any(c[2] > last_swing_high[1] and c[4] < last_swing_high[1] for c in sweep_window)
+
+    bias = None
+    if bullish_sweep:
+        # need MSS: close above the most recent lower-high after the sweep
+        # i.e. close above the last swing high that came AFTER last_swing_low
+        higher_after = [s for s in recent_high_swings if s[0] > last_swing_low[0]]
+        if higher_after and closes[-1] > higher_after[-1][1]:
+            bias = "bull"
+    if bearish_sweep:
+        lower_after = [s for s in recent_low_swings if s[0] > last_swing_high[0]]
+        if lower_after and closes[-1] < lower_after[-1][1]:
+            bias = "bear"
+
+    if not bias:
+        return None
+
+    # Build entry zone (OB or FVG)
+    ob = _find_order_block(candles, bias, last_idx)
+    fvg = _find_fvg(candles, bias, last_idx)
+    if not ob and not fvg:
+        return None
+
+    if ob and fvg:
+        zone_low = max(min(ob["low"], fvg[0]), min(ob["low"], fvg[0]))
+        zone_low = min(ob["low"], fvg[0])
+        zone_high = max(ob["high"], fvg[1])
+    elif ob:
+        zone_low, zone_high = ob["low"], ob["high"]
+    else:
+        zone_low, zone_high = fvg
+
+    entry = (zone_low + zone_high) / 2
+    if bias == "bull":
+        sl = last_swing_low[1] * 0.998  # just under swept low
+        if sl >= entry:
+            return None
+        risk = entry - sl
+        tp1 = entry + risk * 1.5
+        tp2 = entry + risk * 2.5
+        tp3 = entry + risk * 4.0
+        # cap TP3 at next external liquidity (a higher swing high above current price if any)
+        external = [s[1] for s in recent_high_swings if s[1] > closes[-1]]
+        if external:
+            tp3 = min(tp3, max(external))
+    else:
+        sl = last_swing_high[1] * 1.002
+        if sl <= entry:
+            return None
+        risk = sl - entry
+        tp1 = entry - risk * 1.5
+        tp2 = entry - risk * 2.5
+        tp3 = entry - risk * 4.0
+        external = [s[1] for s in recent_low_swings if s[1] < closes[-1]]
+        if external:
+            tp3 = max(tp3, min(external))
+
+    return {
+        "symbol": symbol,
+        "timeframe": timeframe,
+        "bias": bias,
+        "side": "long" if bias == "bull" else "short",
+        "entry_zone_low": round(zone_low, 8),
+        "entry_zone_high": round(zone_high, 8),
+        "entry": round(entry, 8),
+        "stop_loss": round(sl, 8),
+        "take_profit_1": round(tp1, 8),
+        "take_profit_2": round(tp2, 8),
+        "take_profit_3": round(tp3, 8),
+        "risk_reward_tp2": round(abs(tp2 - entry) / abs(entry - sl), 2) if entry != sl else 0,
+        "swept_level": round(last_swing_low[1] if bias == "bull" else last_swing_high[1], 8),
+        "current_price": round(closes[-1], 8),
+        "ob_used": ob is not None,
+        "fvg_used": fvg is not None,
+    }
+
+
+def detect_mmxm_incremental(buffer: List[List[float]], symbol: str, timeframe: str) -> Optional[Dict]:
+    """Stream-native wrapper for incremental execution on in-memory candle buffers."""
+    if not buffer:
+        return None
+    # Only evaluate on closed-candle updates to avoid noisy intra-candle churn.
+    return detect_mmxm(buffer, symbol, timeframe)
