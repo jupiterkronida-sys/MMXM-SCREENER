@@ -44,5 +44,17 @@ services:
     depends_on:
       - backend
 
+  nginx:
+    image: nginx:stable-alpine
+    container_name: msmm-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./app/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+
 volumes:
   mongo_data:

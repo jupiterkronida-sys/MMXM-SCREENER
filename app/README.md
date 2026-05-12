@@ -41,12 +41,27 @@ This repository contains the backend API and frontend UI for the MMXM crypto scr
 
 ## Docker Compose for MongoDB + Backend
 
-If you have Docker installed, you can start MongoDB and the backend together with Docker Compose.
+If you have Docker installed, you can start MongoDB, the backend, and the frontend together with Docker Compose.
 
 From the repository root:
 
 ```bash
-docker compose up -d
+cd "c:\Users\Lenovo\Documents\msmm screener"
+docker compose up -d --build
+```
+
+This builds and starts the services in detached mode.
+
+To check service status:
+
+```bash
+docker compose ps
+```
+
+To view logs:
+
+```bash
+docker compose logs -f
 ```
 
 This will launch:
@@ -55,10 +70,17 @@ This will launch:
 - `backend` on `http://localhost:8000`
 - `frontend` on `http://localhost:3001`
 
-The compose setup uses `app/backend/Dockerfile` and `app/frontend/Dockerfile`, and sets backend env vars for the local MongoDB service.
+The compose setup uses `app/backend/Dockerfile` and `app/frontend/Dockerfile`, and loads backend env vars from `app/backend/.env`.
 
 To stop the services:
 
 ```bash
 docker compose down
+```
+
+If you change environment variables in `app/backend/.env`, restart the stack with:
+
+```bash
+docker compose down
+ docker compose up -d --build
 ```
