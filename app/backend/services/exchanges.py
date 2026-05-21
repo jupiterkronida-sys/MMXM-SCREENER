@@ -1,7 +1,7 @@
 """Bybit + Gate.io public market-data clients (no auth needed)."""
 import httpx
 import logging
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
@@ -35,46 +35,6 @@ async def bybit_top_symbols(limit: int = 60) -> List[Dict]:
     ]
     rows.sort(key=lambda x: x["turnover_24h"], reverse=True)
     return rows[:limit]
-
-
-async def gateio_top_symbols(limit: int = 60) -> List[Dict]:
-    """Top USDT-margined perpetual contracts by 24h volume on Gate.io."""
-    url = f"{GATEIO_BASE}/futures/usdt/tickers"
-    async with httpx.AsyncClient(timeout=20) as c:
-        r = await c.get(url)
-        r.raise_for_status()
-        data = r.json()
-    rows = []
-    for d in data:
-        contract = d.get("contract", "")
-        if not contract.endswith("_USDT"):
-            continue
-        last = float(d.get("last") or 0)
-        vol_quote = float(d.get("volume_24h_quote") or 0)
-        vol_base = float(d.get("volume_24h_base") or 0)
-        change_pct = float(d.get("change_percentage") or 0)
-        funding = float(d.get("funding_rate") or 0)
-        rows.append({
-            "symbol": contract.replace("_USDT", "USDT"),
-            "last_price": last,
-            "price_change_24h_pct": change_pct,
-            "turnover_24h": vol_quote,
-            "volume_24h": vol_base,
-            "funding_rate": funding,
-            "open_interest": 0.0,
-        })
-    rows.sort(key=lambda x: x["turnover_24h"], reverse=True)
-    return rows[:limit]
-
-
-async def get_top_symbols(limit: int = 60) -> List[Dict]:
-    try:
-        rows = await bybit_top_symbols(limit)
-        if rows:
-            return rows
-    except Exception as e:
-        logger.warning(f"bybit top symbols failed (likely region-blocked): {e}; using Gate.io")
-    return await gateio_top_symbols(limit)
 
 
 async def bybit_klines(symbol: str, interval: str, limit: int = 200) -> List[List[float]]:
@@ -115,7 +75,7 @@ async def gateio_klines(symbol: str, interval: str, limit: int = 200) -> List[Li
             return []
         raw = r.json()
     out = []
-    for row in raw:
+    for row in sorted(raw, key=lambda r: int(r["t"])):
         out.append([
             int(row["t"]) * 1000,
             float(row["o"]),
