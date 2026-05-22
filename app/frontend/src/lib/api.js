@@ -1,6 +1,17 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL?.trim() || "http://localhost:8000";
+const defaultBackendUrl = () => {
+  if (typeof window !== "undefined" && window.location?.origin) {
+    const { protocol, hostname, port } = window.location;
+    if (port === "3000" || port === "3001") {
+      return `${protocol}//${hostname}:8000`;
+    }
+    return window.location.origin;
+  }
+  return "http://localhost:8000";
+};
+
+const BACKEND_URL = (process.env.REACT_APP_BACKEND_URL?.trim() || defaultBackendUrl()).replace(/\/+$/, "");
 export const API = `${BACKEND_URL}/api`;
 export const WS_API = `${BACKEND_URL.replace(/^http/i, "ws")}/api/ws`;
 
