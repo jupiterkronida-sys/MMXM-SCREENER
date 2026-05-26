@@ -25,7 +25,7 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017
       - DB_NAME=msmm_screener
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://34.39.155.123:3001,http://34.39.155.123
+       - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
       - SCAN_INTERVAL_SECONDS=120
       - TOP_N_SYMBOLS=300
     depends_on:
