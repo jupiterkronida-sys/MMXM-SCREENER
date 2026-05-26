@@ -43,7 +43,19 @@ export async function runScan() {
   }
 }
 export async function getRuns()        { return (await api.get("/scan/runs", { params: { limit: 10 } })).data; }
-export async function getBacktest(d=30){ return (await api.get("/backtest", { params: { days: d } })).data; }
+export async function getBacktest(d=30){
+  const maxRetries = 1; // total attempts: 2
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return (await api.get("/backtest", { params: { days: d } })).data;
+    } catch (error) {
+      const status = error?.response?.status;
+      const retriable = status === 502 || status === 503 || status === 504;
+      if (!retriable || attempt >= maxRetries) throw error;
+      await sleep(3000 * (attempt + 1));
+    }
+  }
+}
 export async function getMarketTop()   { return (await api.get("/market/top")).data; }
 export async function getCoingecko()   { return (await api.get("/market/coingecko")).data; }
 export async function getCMC(syms)     { return (await api.get("/market/cmc", { params: { symbols: syms } })).data; }

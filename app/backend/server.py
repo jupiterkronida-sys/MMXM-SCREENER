@@ -153,6 +153,8 @@ async def get_signal(signal_id: str):
 
 
 # ---------- Backtest ----------
+_klines_cache: dict = {}
+
 @api_router.get("/backtest")
 async def backtest(days: int = Query(30, ge=1, le=90)):
     """Walks past MMXM signals and checks if TP1 or SL hit first using subsequent klines."""
@@ -164,15 +166,32 @@ async def backtest(days: int = Query(30, ge=1, le=90)):
     if not sigs:
         return {"days": days, "total": 0, "wins": 0, "losses": 0, "win_rate": 0.0, "details": []}
 
+    unique_pairs = {(s["symbol"], s["timeframe"]) for s in sigs}
+
+    async def fetch_klines(symbol, timeframe):
+        cache_key = f"{symbol}_{timeframe}"
+        if cache_key in _klines_cache:
+            return cache_key, _klines_cache[cache_key]
+        try:
+            kl = await get_klines(symbol, timeframe, 200)
+        except Exception:
+            kl = []
+        _klines_cache[cache_key] = kl
+        return cache_key, kl
+
+    results = await asyncio.gather(*[fetch_klines(sym, tf) for sym, tf in unique_pairs])
+    klines_map = dict(results)
+
     wins = 0
     losses = 0
     open_ = 0
     details = []
     for s in sigs:
+        cache_key = f"{s['symbol']}_{s['timeframe']}"
+        kl = klines_map.get(cache_key)
+        if not kl:
+            continue
         try:
-            kl = await get_klines(s["symbol"], s["timeframe"], 200)
-            if not kl:
-                continue
             sig_time_ms = int(datetime.fromisoformat(s["created_at"]).timestamp() * 1000)
             future = [c for c in kl if c[0] > sig_time_ms]
             outcome = "open"

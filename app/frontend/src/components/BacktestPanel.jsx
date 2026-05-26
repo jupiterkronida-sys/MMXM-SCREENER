@@ -1,17 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getBacktest } from "../lib/api";
-import { Loader2, History } from "lucide-react";
+import { Loader2, History, AlertTriangle } from "lucide-react";
 
 export default function BacktestPanel() {
   const [data, setData] = useState(null);
   const [days, setDays] = useState(30);
   const [loading, setLoading] = useState(false);
 
+  const [error, setError] = useState(null);
+
   const load = useCallback(async (d) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await getBacktest(d);
       setData(res);
+    } catch (err) {
+      setError(err?.response?.status === 504 ? "Backend timeout — try fewer days or retry." : err.message);
     } finally {
       setLoading(false);
     }
@@ -45,6 +50,7 @@ export default function BacktestPanel() {
       </p>
 
       {loading && <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-dim)" }}><Loader2 size={14} className="animate-spin" /> Replaying…</div>}
+      {error && <div className="flex items-center gap-2 text-sm mt-2" style={{ color: "var(--short)" }}><AlertTriangle size={14} /> {error}</div>}
 
       {data && !loading && (
         <div className="grid grid-cols-4 gap-3">
