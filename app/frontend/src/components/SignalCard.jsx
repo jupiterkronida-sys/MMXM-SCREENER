@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Stars, fmt, fmtPct, timeAgo } from "./util";
-import { ChevronDown, Crosshair, ShieldAlert, Target, Activity, BarChart3 } from "lucide-react";
+import { ChevronDown, Crosshair, ShieldAlert, Target, Activity, BarChart3, TrendingUp, TrendingDown, Layers, Clock } from "lucide-react";
 
 export default function SignalCard({ sig }) {
   const [open, setOpen] = useState(false);
   const isLong = sig.side === "long";
   const isMmxm = sig.source === "mmxm";
-
+  const isConfluence = sig.source === "confluence";
+  
   return (
     <div className={`card signal-card ${sig.side}`} data-testid={`signal-card-${sig.symbol}-${sig.source}-${sig.side}`}>
       {/* Header */}
@@ -20,6 +21,8 @@ export default function SignalCard({ sig }) {
               </span>
               {isMmxm ? (
                 <span className="tag">MMXM · {sig.timeframe}</span>
+              ) : isConfluence ? (
+                <span className="tag" style={{ background: "rgba(168,85,247,0.2)", color: "#a855f7" }}>CONFLUENCE</span>
               ) : (
                 <span className="tag">SCREENER · 1H</span>
               )}
@@ -42,6 +45,61 @@ export default function SignalCard({ sig }) {
           <KV label="Swept" value={fmt(sig.swept_level)} mono dim />
           <KV label="Stop loss" value={fmt(sig.stop_loss)} mono color="var(--short)" icon={<ShieldAlert size={12} />} />
           <KV label="Take profit 1" value={fmt(sig.take_profit_1)} mono color="var(--long)" icon={<Target size={12} />} />
+        </div>
+      ) : isConfluence ? (
+        <div className="space-y-3 mt-4">
+          {/* Main Confluence Metrics */}
+          <div className="grid grid-cols-2 gap-2">
+            <KV label="Current Price" value={fmt(sig.current_price)} mono />
+            <KV label="Impact In" value={`${sig.bars_to_impact} bars`} mono icon={<Clock size={12} />} />
+            <KV label="S/R Level" value={fmt(sig.sr_level)} mono color={sig.sr_type === "SUPPORT" ? "var(--long)" : "var(--short)"} icon={sig.sr_type === "SUPPORT" ? <TrendingUp size={12} /> : <TrendingDown size={12} />} />
+            <KV label="S/R Strength" value={`${sig.sr_strength}%`} mono color="var(--gold)" />
+          </div>
+          
+          {/* Shadow Path Preview */}
+          {sig.shadow_path && sig.shadow_path.length > 0 && (
+            <div className="pt-2" style={{ borderTop: "1px solid var(--line)" }}>
+              <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "var(--text-mute)" }}>
+                Future Shadow Projection
+              </div>
+              <div className="flex items-end gap-0.5 h-12" style={{ background: "rgba(0,0,0,0.3)", borderRadius: 6, padding: 4 }}>
+                {sig.shadow_path.slice(0, 10).map((price, idx) => {
+                  const min = Math.min(...sig.shadow_path);
+                  const max = Math.max(...sig.shadow_path);
+                  const range = max - min || 1;
+                  const height = ((price - min) / range) * 100;
+                  return (
+                    <div
+                      key={idx}
+                      className="flex-1 rounded-sm"
+                      style={{
+                        height: `${Math.max(10, height)}%`,
+                        background: idx === 0 ? (isLong ? "var(--long)" : "var(--short)") : "rgba(168,85,247,0.5)",
+                        opacity: 0.3 + (idx / sig.shadow_path.length) * 0.7,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+              <div className="text-[10px] mt-1" style={{ color: "var(--text-dim)" }}>
+                Projected: {fmt(sig.shadow_path[0])} → {fmt(sig.shadow_path[sig.shadow_path.length - 1])}
+              </div>
+            </div>
+          )}
+          
+          {/* Confluence Scores */}
+          <div className="grid grid-cols-3 gap-2 pt-2" style={{ borderTop: "1px solid var(--line)" }}>
+            <KV label="Pattern" value={`${Math.round(sig.pattern_score * 100)}%`} mono />
+            <KV label="Zone" value={`${Math.round(sig.zone_score * 100)}%`} mono />
+            <KV label="Total" value={`${Math.round(sig.combined_score * 100)}%`} mono color="var(--gold)" bold />
+          </div>
+          
+          {/* Reaction Type */}
+          <div className="text-xs pt-2" style={{ color: "var(--text-mute)", borderTop: "1px solid var(--line)" }}>
+            <Layers size={12} className="inline mr-1" />
+            Expected reaction: <strong style={{ color: "var(--text)" }}>{sig.reaction_type?.replace("_", " ") || "Unknown"}</strong>
+            {sig.sr_type === "SUPPORT" ? " off support" : " off resistance"}
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 mt-4">
@@ -82,14 +140,14 @@ export default function SignalCard({ sig }) {
   );
 }
 
-function KV({ label, value, mono, dim, color, icon }) {
+function KV({ label, value, mono, dim, color, icon, bold }) {
   return (
     <div>
       <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider" style={{ color: "var(--text-mute)" }}>
         {icon}
         {label}
       </div>
-      <div className={mono ? "mono font-semibold" : "font-semibold"} style={{ color: color || (dim ? "var(--text-dim)" : "var(--text)"), fontSize: 14 }}>
+      <div className={mono ? "mono font-semibold" : "font-semibold"} style={{ color: color || (dim ? "var(--text-dim)" : "var(--text)"), fontSize: 14, fontWeight: bold ? 700 : undefined }}>
         {value}
       </div>
     </div>
