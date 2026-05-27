@@ -21,7 +21,6 @@ const SOURCES = [
   { id: "all", label: "All" },
   { id: "mmxm", label: "MMXM" },
   { id: "screener", label: "Pump/Dump" },
-  { id: "confluence", label: "Confluence" },
 ];
 
 export default function Dashboard() {
@@ -52,7 +51,7 @@ export default function Dashboard() {
       },
     });
     setLoading(false);
-  }, [bootstrap]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -120,13 +119,12 @@ export default function Dashboard() {
         <MarketStrip tickers={tickers} stream={rtState.stream} />
 
         {/* Stats row */}
-        <section className="grid grid-cols-2 md:grid-cols-6 gap-3" data-testid="stats-row">
+        <section className="grid grid-cols-2 md:grid-cols-5 gap-3" data-testid="stats-row">
           <StatTile icon={<Layers size={14} />} label="Signals (7d)" value={stats?.total_7d ?? "—"} />
           <StatTile icon={<ArrowUpRight size={14} />} label="Longs (7d)" value={stats?.longs_7d ?? "—"} color="var(--long)" />
           <StatTile icon={<ArrowDownRight size={14} />} label="Shorts (7d)" value={stats?.shorts_7d ?? "—"} color="var(--short)" />
           <StatTile icon={<ShieldAlert size={14} />} label="MMXM setups" value={stats?.mmxm_7d ?? "—"} />
           <StatTile icon={<Zap size={14} />} label="Pump/Dump" value={stats?.screener_7d ?? "—"} color="var(--gold)" />
-          <StatTile icon={<Activity size={14} />} label="Confluence" value={stats?.confluence_7d ?? "—"} color="#a855f7" />
         </section>
 
         <BacktestPanel />
