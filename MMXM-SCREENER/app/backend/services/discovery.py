@@ -6,8 +6,8 @@ from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
-CG_BASE = "https://api.coingecko.com/api/v3"
-CMC_BASE = "https://pro-api.coinmarketcap.com/v1"
+CG_BASE = os.environ.get("COINGECKO_API_BASE", "https://api.coingecko.com/api/v3")
+CMC_BASE = os.environ.get("CMC_API_BASE", "https://pro-api.coinmarketcap.com/v1")
 
 
 async def coingecko_top(n: int = 250) -> List[Dict]:
@@ -55,7 +55,8 @@ async def cmc_metadata(symbols: List[str]) -> Dict[str, Dict]:
     for sym, payload in data.items():
         # CMC may return list (duplicates) or dict
         item = payload[0] if isinstance(payload, list) else payload
-        q = item.get("quote", {}).get("USD", {})
+        quote = item.get("quote", {})
+        q = quote.get("USD", {})
         out[sym] = {
             "rank": item.get("cmc_rank"),
             "market_cap": q.get("market_cap"),

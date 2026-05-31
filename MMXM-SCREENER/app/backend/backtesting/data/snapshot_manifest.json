@@ -1,0 +1,13 @@
+{
+  "symbols": {
+    "GOODUSDT": {
+      "interval": "1h",
+      "start_ts": 1609459200000,
+      "end_ts": 1609743600000,
+      "num_candles": 80,
+      "sha256_hash": "f74cd21b01404c05ef97010042a74bbe4ffb302d4cadcaae76e2e25d18e8a1c9"
+    }
+  },
+  "created_at": "2026-05-30T06:52:28.210740+00:00",
+  "version": "1.0.0"
+}

@@ -1,0 +1,43 @@
+============================================================
+  MMXM Backtest from Dump (12 symbols, 121 signals)
+  Generated: 2026-05-30 01:41:55
+============================================================
+
+--- PERFORMANCE SUMMARY ---
+  Total Return:          -102.79%
+  Annualized Return:     -100.00%
+  Annualized Vol:         891.14%
+
+--- RISK METRICS ---
+  Sharpe Ratio:          -8.8674
+  Sortino Ratio:         -9.2377
+  Calmar Ratio:            -0.97
+  Max Drawdown:           102.96%
+  Max DD Duration:         407 bars
+  VaR (95%):               -6.40%
+
+--- TRADING STATISTICS ---
+  Total Trades:               25
+  Win Rate:                40.00%
+  Avg Win:                  1.92%
+  Avg Loss:                -1.97%
+  Profit Factor:          0.6496
+  Avg Holding:               7.1 bars
+
+--- CAPITAL ---
+  Initial Capital:      $100,000.00
+  Final Equity:         $ -2,791.43
+  Net P&L:              $-102,791.43
+
+--- GATE 8 HOLDOUT EVALUATION ---
+  Decision:             FAIL
+  Holdout Sharpe:         0.0000
+  Benchmark Sharpe:       0.0506
+  Sharpe vs Benchmark:  -100.00%
+  GR-5:                 FAIL
+  GR-15:                FAIL
+  Failures:             Not enough trades: 0 < 5; Sharpe 0.00 < 0.5; GR-15: Sharpe 0.00 is -100.0% over benchmark (15.0% needed)
+
+============================================================
+  End of Report
+============================================================

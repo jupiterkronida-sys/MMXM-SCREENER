@@ -5,6 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+TELEGRAM_API_BASE = os.environ.get("TELEGRAM_API_BASE", "https://api.telegram.org")
+
 
 def _format_signal(sig: dict) -> str:
     if sig.get("source") == "mmxm":
@@ -39,7 +41,7 @@ async def send_alert(sig: dict) -> bool:
     if not token or not chat_id:
         return False
     text = _format_signal(sig)
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    url = f"{TELEGRAM_API_BASE}/bot{token}/sendMessage"
     try:
         async with httpx.AsyncClient(timeout=15) as c:
             r = await c.post(
@@ -47,11 +49,11 @@ async def send_alert(sig: dict) -> bool:
                 json={"chat_id": chat_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True},
             )
             if r.status_code != 200:
-                logger.warning(f"telegram fail {r.status_code} {r.text[:200]}")
+                logger.warning("telegram fail %s %s", r.status_code, r.text[:200])
                 return False
             return True
     except Exception as e:
-        logger.warning(f"telegram error: {e}")
+        logger.warning("telegram error: %s", e)
         return False
 
 
@@ -60,7 +62,7 @@ async def send_message(text: str) -> bool:
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not token or not chat_id:
         return False
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    url = f"{TELEGRAM_API_BASE}/bot{token}/sendMessage"
     try:
         async with httpx.AsyncClient(timeout=15) as c:
             r = await c.post(url, json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"})

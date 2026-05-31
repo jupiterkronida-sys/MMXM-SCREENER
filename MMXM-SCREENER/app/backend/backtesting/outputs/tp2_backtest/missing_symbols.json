@@ -1,0 +1,716 @@
+[
+  {
+    "key": "AAPLXUSDT_1h",
+    "symbol": "AAPLXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AGTUSDT_1h",
+    "symbol": "AGTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AIAUSDT_1h",
+    "symbol": "AIAUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AIAUSDT_4h",
+    "symbol": "AIAUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AIOTUSDT_1h",
+    "symbol": "AIOTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AIUSDT_1h",
+    "symbol": "AIUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AMDUSDT_1h",
+    "symbol": "AMDUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "AMZNXUSDT_1h",
+    "symbol": "AMZNXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "ANTHROPICUSDT_4h",
+    "symbol": "ANTHROPICUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "ASTEROIDUSDT_1h",
+    "symbol": "ASTEROIDUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "ASTEROIDUSDT_4h",
+    "symbol": "ASTEROIDUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BASUSDT_1h",
+    "symbol": "BASUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BASUSDT_4h",
+    "symbol": "BASUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BERAUSDT_4h",
+    "symbol": "BERAUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:4"
+  },
+  {
+    "key": "BGSCUSDT_1h",
+    "symbol": "BGSCUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BGSCUSDT_4h",
+    "symbol": "BGSCUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BOBUSDT_1h",
+    "symbol": "BOBUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BOBUSDT_4h",
+    "symbol": "BOBUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BONKUSDT_1h",
+    "symbol": "BONKUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "BONKUSDT_4h",
+    "symbol": "BONKUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "COHRUSDT_1h",
+    "symbol": "COHRUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "COINXUSDT_1h",
+    "symbol": "COINXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "COINXUSDT_4h",
+    "symbol": "COINXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "COLLECTUSDT_1h",
+    "symbol": "COLLECTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "COSUSDT_1h",
+    "symbol": "COSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "CRCLXUSDT_1h",
+    "symbol": "CRCLXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "CRCLXUSDT_4h",
+    "symbol": "CRCLXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "DEGENUSDT_1h",
+    "symbol": "DEGENUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "DISUSDT_4h",
+    "symbol": "DISUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "DOGSUSDT_1h",
+    "symbol": "DOGSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "DOGUSDT_1h",
+    "symbol": "DOGUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:4"
+  },
+  {
+    "key": "DOGUSDT_4h",
+    "symbol": "DOGUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "DUSDT_1h",
+    "symbol": "DUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "EDGEXUSDT_1h",
+    "symbol": "EDGEXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "FETUSDT_1h",
+    "symbol": "FETUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "FLOKIUSDT_1h",
+    "symbol": "FLOKIUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "FUNUSDT_1h",
+    "symbol": "FUNUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "FUNUSDT_4h",
+    "symbol": "FUNUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "GLWUSDT_4h",
+    "symbol": "GLWUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "GOOGLXUSDT_1h",
+    "symbol": "GOOGLXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "GUAUSDT_1h",
+    "symbol": "GUAUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "GUAUSDT_4h",
+    "symbol": "GUAUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "GUSDT_1h",
+    "symbol": "GUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "GUSDT_4h",
+    "symbol": "GUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "HOODXUSDT_1h",
+    "symbol": "HOODXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "HOODXUSDT_4h",
+    "symbol": "HOODXUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "JPMUSDT_1h",
+    "symbol": "JPMUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "LAYERUSDT_1h",
+    "symbol": "LAYERUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "LUNCUSDT_1h",
+    "symbol": "LUNCUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "LUNCUSDT_4h",
+    "symbol": "LUNCUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "MANTRAUSDT_1h",
+    "symbol": "MANTRAUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "MAVIAUSDT_4h",
+    "symbol": "MAVIAUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:4"
+  },
+  {
+    "key": "METAXUSDT_1h",
+    "symbol": "METAXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "MSTRXUSDT_1h",
+    "symbol": "MSTRXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "MSTRXUSDT_4h",
+    "symbol": "MSTRXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "NAS100USDT_1h",
+    "symbol": "NAS100USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "NAS100USDT_4h",
+    "symbol": "NAS100USDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "NGUSDT_1h",
+    "symbol": "NGUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "NVDAXUSDT_1h",
+    "symbol": "NVDAXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "NVDAXUSDT_4h",
+    "symbol": "NVDAXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "ORCLXUSDT_1h",
+    "symbol": "ORCLXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PEPEUSDT_1h",
+    "symbol": "PEPEUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PIUSDT_1h",
+    "symbol": "PIUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PLAYUSDT_1h",
+    "symbol": "PLAYUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PLTRXUSDT_1h",
+    "symbol": "PLTRXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "PROMUSDT_1h",
+    "symbol": "PROMUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PROMUSDT_4h",
+    "symbol": "PROMUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PROSUSDT_1h",
+    "symbol": "PROSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PUMPUSDT_1h",
+    "symbol": "PUMPUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "PUMPUSDT_4h",
+    "symbol": "PUMPUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "QQQXUSDT_1h",
+    "symbol": "QQQXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "QQQXUSDT_4h",
+    "symbol": "QQQXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "RATSUSDT_1h",
+    "symbol": "RATSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "RATSUSDT_4h",
+    "symbol": "RATSUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "RLSUSDT_1h",
+    "symbol": "RLSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "RLSUSDT_4h",
+    "symbol": "RLSUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SHIBUSDT_1h",
+    "symbol": "SHIBUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SHIBUSDT_4h",
+    "symbol": "SHIBUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SKYAIUSDT_1h",
+    "symbol": "SKYAIUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SNOWUSDT_1h",
+    "symbol": "SNOWUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SOXLUSDT_1h",
+    "symbol": "SOXLUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "SOXLUSDT_4h",
+    "symbol": "SOXLUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "SPACEXUSDT_1h",
+    "symbol": "SPACEXUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SPACEXUSDT_4h",
+    "symbol": "SPACEXUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SPX500USDT_1h",
+    "symbol": "SPX500USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SPYXUSDT_1h",
+    "symbol": "SPYXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "SPYXUSDT_4h",
+    "symbol": "SPYXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "STARUSDT_1h",
+    "symbol": "STARUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "SUSHIUSDT_4h",
+    "symbol": "SUSHIUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:4"
+  },
+  {
+    "key": "SYSUSDT_1h",
+    "symbol": "SYSUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TAGUSDT_1h",
+    "symbol": "TAGUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TAKEUSDT_4h",
+    "symbol": "TAKEUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TLTUSDT_1h",
+    "symbol": "TLTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TQQQXUSDT_1h",
+    "symbol": "TQQQXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "TQQQXUSDT_4h",
+    "symbol": "TQQQXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "TRADOORUSDT_4h",
+    "symbol": "TRADOORUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TSLAXUSDT_1h",
+    "symbol": "TSLAXUSDT",
+    "interval": "1h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "TSLAXUSDT_4h",
+    "symbol": "TSLAXUSDT",
+    "interval": "4h",
+    "error": "known_no_data_tokenized_stock"
+  },
+  {
+    "key": "TURBOUSDT_4h",
+    "symbol": "TURBOUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "TW88USDT_1h",
+    "symbol": "TW88USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "UK100USDT_1h",
+    "symbol": "UK100USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "UK100USDT_4h",
+    "symbol": "UK100USDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "UPUSDT_1h",
+    "symbol": "UPUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "UPUSDT_4h",
+    "symbol": "UPUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "US30USDT_1h",
+    "symbol": "US30USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "USARUSDT_1h",
+    "symbol": "USARUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "VICUSDT_1h",
+    "symbol": "VICUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "VTHOUSDT_1h",
+    "symbol": "VTHOUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "VTHOUSDT_4h",
+    "symbol": "VTHOUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "XBRUSDT_1h",
+    "symbol": "XBRUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "XCUUSDT_1h",
+    "symbol": "XCUUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "XPDUSDT_1h",
+    "symbol": "XPDUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "XPTUSDT_1h",
+    "symbol": "XPTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "XTIUSDT_1h",
+    "symbol": "XTIUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "ZESTUSDT_1h",
+    "symbol": "ZESTUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "\u5e01\u5b89\u4eba\u751fUSDT_1h",
+    "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "\u5e01\u5b89\u4eba\u751fUSDT_4h",
+    "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "\u6211\u8e0f\u9a6c\u6765\u4e86USDT_1h",
+    "symbol": "\u6211\u8e0f\u9a6c\u6765\u4e86USDT",
+    "interval": "1h",
+    "error": "insufficient_bars:0"
+  },
+  {
+    "key": "\u9f99\u867eUSDT_4h",
+    "symbol": "\u9f99\u867eUSDT",
+    "interval": "4h",
+    "error": "insufficient_bars:0"
+  }
+]

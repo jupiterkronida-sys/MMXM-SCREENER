@@ -1,5 +1,4 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Query, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -8,7 +7,7 @@ import asyncio
 import logging
 from pathlib import Path
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime, timezone, timedelta
 
 from services.scanner import run_scan, scanner_loop
@@ -71,7 +70,7 @@ async def ws_stream(ws: WebSocket):
             raw = await ws.receive_text()
             await realtime_hub.handle_client_message(ws, raw)
     except WebSocketDisconnect:
-        pass
+        logger.debug("Client disconnected from /api/ws")
     finally:
         await realtime_hub.disconnect(ws)
 

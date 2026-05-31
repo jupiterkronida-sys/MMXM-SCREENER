@@ -1,0 +1,75 @@
+
+======================================================================
+  MMXM TP2 SIGNAL BACKTEST REPORT
+  Capital Model  : $5,000 initial | 2% equity notional x confidence stars
+  Leverage Model : 3*=3x  4*=4x  5*=5x  |  SL loss = actual SL distance
+  Period         : 2026-05-11 to 2026-05-30 (19 days)
+  Generated      : 2026-05-30 23:22:27 UTC
+======================================================================
+
+  CAPITAL SUMMARY
+    Starting Equity    : $5,000.00
+    Final Equity       : $  1,665.84
+    Total P&L          : $ -3,334.21  (-66.68%)
+    Max Drawdown       : $  3,350.39  (66.86%)
+
+  SIGNAL UNIVERSE
+    Total MMXM signals        : 1,607
+    No data (no OHLCV)        : 334
+    Not entered (zone miss)   : 523
+    Tradeable (entered)       : 750
+
+  OUTCOME DISTRIBUTION (tradeable only)
+    TP2 Hit  :   46  (6.1%)
+    SL Hit   :  683  (91.1%)
+    Timeout  :   21  (2.8%)
+
+  TRADE PERFORMANCE
+    Win Rate              : 6.1%
+    Avg Win               : $   +9.58
+    Avg Loss              : $   -5.65
+    Expectancy per Trade  : $ -4.7154
+    Profit Factor         : 0.11
+    Sharpe Ratio          : -30.50
+    Max Consec Losses     : 51
+
+  RISK
+    Soft Cap Warnings     : 0  (all trades executed)
+    Max Drawdown          : 66.86%
+
+  BREAKDOWN BY CONFIDENCE (leverage tier)
+  Tier    Pos($)  Trades    WR%   Expect$   TotalP&L$   Med SL$
+  ------------------------------------------------------------
+  3*     $   155       89   14.6%  $ -3.3619  $   -290.77  $  3.8384
+  4*     $   256      343    6.1%  $ -4.4311  $  -1389.92  $  3.7961
+  5*     $   368      318    3.8%  $ -5.3920  $  -1653.52  $  4.2844
+
+  BREAKDOWN BY TIMEFRAME
+    1h :  630 trades | 6.5% WR | $-3.8029 expect | $-2240.92 P&L
+    4h :  120 trades | 4.2% WR | $-9.5814 expect | $-1093.29 P&L
+
+  BREAKDOWN BY SIDE
+    Long :  385 trades | 3.4% WR | $-4.6988 expect | $-1754.22 P&L
+    Short:  365 trades | 9.0% WR | $-4.7379 expect | $-1579.99 P&L
+
+  EXECUTION COSTS
+    Cost per trade   : 0.13% of position notional
+    Total cost drag  : $284.21  (5.68% of starting equity)
+
+  CONCLUSION
+    The MMXM TP2 signal strategy with confidence-leveraged position sizing
+    lost 66.68% of capital over 19 days across 750 trades. Key observations:
+
+    1. Win rate is critically low at 6.1% — strategy relies on rare big winners
+    2. Avg win ($9.58) is only 1.7x avg loss ($5.65) — insufficient to offset 6.1% WR
+    3. Higher confidence (5*) performs WORSE (3.8% WR) than 3* (14.6% WR)
+       — signal confidence does NOT predict outcome
+    4. Max 51 consecutive losses would destroy any trader's psychology
+    5. Sharpe ratio of -30.5 confirms extreme underperformance vs risk-free
+    6. 4h timeframe significantly worse than 1h
+
+  OUTPUT FILES
+    signal_outcomes.json     — per-trade detail with equity_after_trade
+    performance_report.json  — full metrics JSON
+    soft_cap_warnings.json   — soft cap warning events
+======================================================================

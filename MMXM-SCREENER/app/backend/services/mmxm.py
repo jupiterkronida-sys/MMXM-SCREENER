@@ -11,9 +11,22 @@ Detects:
 Returns a dict per symbol/timeframe or None.
 """
 import time
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from .indicators import atr
+
+
+@dataclass
+class _TradePlanCtx:
+    bias: str
+    actual_entry: float
+    sl: float
+    risk: float
+    current_price: float
+    min_risk: float
+    recent_high_swings: list
+    recent_low_swings: list
 
 INTERVAL_MS = {"15m": 15 * 60_000, "1h": 60 * 60_000, "4h": 4 * 60 * 60_000, "1d": 24 * 60 * 60_000}
 MAX_SWEEP_MSS_CANDLES = 5
@@ -33,17 +46,23 @@ def _closed_candles(candles: List[List[float]], timeframe: str) -> List[List[flo
 
 
 def _swings(highs: List[float], lows: List[float], left: int = 2, right: int = 2):
-    """Return list of (idx, price, kind) where kind in {'H','L'}."""
+    """Return list of (idx, price, kind, confirmed_at) where kind in {'H','L'}.
+
+    confirmed_at = idx + right (the bar index when the fractal is fully confirmed).
+    A swing at idx requires right neighbors idx+1 .. idx+right to exist, so
+    it is NOT known until the last right neighbor closes. This is the lookahead
+    offset that must be applied in backtesting to avoid future data leakage.
+    """
     swings = []
     for i in range(left, len(highs) - right):
         if all(highs[i] > highs[i - j] for j in range(1, left + 1)) and all(
             highs[i] > highs[i + j] for j in range(1, right + 1)
         ):
-            swings.append((i, highs[i], "H"))
+            swings.append((i, highs[i], "H", i + right))
         if all(lows[i] < lows[i - j] for j in range(1, left + 1)) and all(
             lows[i] < lows[i + j] for j in range(1, right + 1)
         ):
-            swings.append((i, lows[i], "L"))
+            swings.append((i, lows[i], "L", i + right))
     swings.sort(key=lambda s: s[0])
     return swings
 
@@ -111,8 +130,12 @@ def _ordered_targets(direction: str, entry: float, risk: float, external: List[f
 
 
 def _known_swings(swings, at_idx: int):
-    """Swings confirmed by the time candle at_idx has closed."""
-    return [s for s in swings if s[0] <= at_idx - 2]
+    """Swings confirmed by the time candle at_idx has closed.
+
+    Uses the confirmed_at field (s[3]) which = idx + right_neighbors.
+    Only swings whose fractal was fully confirmed by bar at_idx are returned.
+    """
+    return [s for s in swings if s[3] <= at_idx]
 
 
 def _find_recent_setup(candles: List[List[float]], swings, closes: List[float]):
@@ -182,6 +205,39 @@ def _find_recent_setup(candles: List[List[float]], swings, closes: List[float]):
     return candidates[0]
 
 
+def _compute_entry_zone(ob, fvg, bias):
+    if ob and fvg:
+        zone_low = min(ob["low"], fvg[0])
+        zone_high = max(ob["high"], fvg[1])
+    elif ob:
+        zone_low, zone_high = ob["low"], ob["high"]
+    else:
+        zone_low, zone_high = fvg
+    return zone_low, zone_high
+
+
+def _compute_trade_plan(ctx: _TradePlanCtx):
+    if ctx.bias == "bull":
+        if ctx.sl >= ctx.actual_entry:
+            return None
+        if ctx.risk <= ctx.min_risk:
+            return None
+        external = sorted({s[1] for s in ctx.recent_high_swings if s[1] > ctx.actual_entry})
+        tp1, tp2, tp3 = _ordered_targets(ctx.bias, ctx.actual_entry, ctx.risk, external)
+        if ctx.current_price <= ctx.sl or ctx.current_price >= tp1:
+            return None
+    else:
+        if ctx.sl <= ctx.actual_entry:
+            return None
+        if ctx.risk <= ctx.min_risk:
+            return None
+        external = sorted({s[1] for s in ctx.recent_low_swings if s[1] < ctx.actual_entry}, reverse=True)
+        tp1, tp2, tp3 = _ordered_targets(ctx.bias, ctx.actual_entry, ctx.risk, external)
+        if ctx.current_price >= ctx.sl or ctx.current_price <= tp1:
+            return None
+    return tp1, tp2, tp3
+
+
 def detect_mmxm(candles: List[List[float]], symbol: str, timeframe: str) -> Optional[Dict]:
     """candles: oldest->newest [t, o, h, l, c, v]."""
     candles = _closed_candles(candles, timeframe)
@@ -193,6 +249,8 @@ def detect_mmxm(candles: List[List[float]], symbol: str, timeframe: str) -> Opti
     closes = [c[4] for c in candles]
     current_price = closes[-1]
     atr_value = atr(highs, lows, closes, 14)
+    if atr_value is None:
+        return None
     swings = _swings(highs, lows, 2, 2)
     if len(swings) < 4:
         return None
@@ -226,60 +284,58 @@ def detect_mmxm(candles: List[List[float]], symbol: str, timeframe: str) -> Opti
     if not ob and not fvg:
         return None
 
-    if ob and fvg:
-        zone_low = min(ob["low"], fvg[0])
-        zone_high = max(ob["high"], fvg[1])
-    elif ob:
-        zone_low, zone_high = ob["low"], ob["high"]
-    else:
-        zone_low, zone_high = fvg
-
+    zone_low, zone_high = _compute_entry_zone(ob, fvg, bias)
     actual_entry = zone_high if bias == "bull" else zone_low
-    entry = actual_entry
     min_risk = max(current_price * 0.0002, atr_value * 0.05, 1e-12)
-    if bias == "bull":
-        sl = swept_swing[1] - atr_value * 0.5  # just under swept low
-        if sl >= actual_entry:
-            return None
-        risk = actual_entry - sl
-        if risk <= min_risk:
-            return None
-        external = sorted({s[1] for s in recent_high_swings if s[1] > actual_entry})
-        tp1, tp2, tp3 = _ordered_targets(bias, actual_entry, risk, external)
-        if current_price <= sl or current_price >= tp1:
-            return None
-    else:
-        sl = swept_swing[1] + atr_value * 0.5  # just above swept high
-        if sl <= actual_entry:
-            return None
-        risk = sl - actual_entry
-        if risk <= min_risk:
-            return None
-        external = sorted({s[1] for s in recent_low_swings if s[1] < actual_entry}, reverse=True)
-        tp1, tp2, tp3 = _ordered_targets(bias, actual_entry, risk, external)
-        if current_price >= sl or current_price <= tp1:
-            return None
 
+    if bias == "bull":
+        sl = swept_swing[1] - atr_value * 0.5
+        risk = actual_entry - sl
+    else:
+        sl = swept_swing[1] + atr_value * 0.5
+        risk = sl - actual_entry
+
+    ctx = _TradePlanCtx(bias=bias, actual_entry=actual_entry, sl=sl, risk=risk,
+                         current_price=current_price, min_risk=min_risk,
+                         recent_high_swings=recent_high_swings,
+                         recent_low_swings=recent_low_swings)
+    targets = _compute_trade_plan(ctx)
+    if targets is None:
+        return None
+    tp1, tp2, tp3 = targets
+    side = "long" if bias == "bull" else "short"
+
+    return _build_result_dict(
+        symbol=symbol, timeframe=timeframe, bias=bias, side=side,
+        zone_low=zone_low, zone_high=zone_high, actual_entry=actual_entry,
+        sl=sl, tp1=tp1, tp2=tp2, tp3=tp3, risk=risk,
+        swept_swing=swept_swing, current_price=current_price,
+        ob=ob, candles=candles, sweep_idx=sweep_idx, mss_idx=mss_idx,
+        last_idx=last_idx,
+    )
+
+
+def _build_result_dict(**kw):
     return {
-        "symbol": symbol,
-        "timeframe": timeframe,
-        "bias": bias,
-        "side": "long" if bias == "bull" else "short",
-        "entry_zone_low": round(zone_low, 8),
-        "entry_zone_high": round(zone_high, 8),
-        "entry": round(entry, 8),
-        "stop_loss": round(sl, 8),
-        "take_profit_1": round(tp1, 8),
-        "take_profit_2": round(tp2, 8),
-        "take_profit_3": round(tp3, 8),
-        "risk_reward_tp2": round(abs(tp2 - actual_entry) / risk, 2),
-        "swept_level": round(swept_swing[1], 8),
-        "current_price": round(current_price, 8),
-        "ob_used": ob is not None,
-        "fvg_used": fvg is not None,
-        "sweep_time": int(candles[sweep_idx][0]),
-        "mss_time": int(candles[mss_idx][0]),
-        "setup_age_candles": last_idx - mss_idx,
+        "symbol": kw["symbol"],
+        "timeframe": kw["timeframe"],
+        "bias": kw["bias"],
+        "side": kw["side"],
+        "entry_zone_low": round(kw["zone_low"], 8),
+        "entry_zone_high": round(kw["zone_high"], 8),
+        "entry": round(kw["actual_entry"], 8),
+        "stop_loss": round(kw["sl"], 8),
+        "take_profit_1": round(kw["tp1"], 8),
+        "take_profit_2": round(kw["tp2"], 8),
+        "take_profit_3": round(kw["tp3"], 8),
+        "risk_reward_tp2": round(abs(kw["tp2"] - kw["actual_entry"]) / kw["risk"], 2),
+        "swept_level": round(kw["swept_swing"][1], 8),
+        "current_price": round(kw["current_price"], 8),
+        "ob_used": kw["ob"] is not None,
+        "fvg_used": kw["fvg"] is not None,
+        "sweep_time": int(kw["candles"][kw["sweep_idx"]][0]),
+        "mss_time": int(kw["candles"][kw["mss_idx"]][0]),
+        "setup_age_candles": kw["last_idx"] - kw["mss_idx"],
     }
 
 

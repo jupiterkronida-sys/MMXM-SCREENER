@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getBacktest } from "../lib/api";
 import { Loader2, History, AlertTriangle } from "lucide-react";
 

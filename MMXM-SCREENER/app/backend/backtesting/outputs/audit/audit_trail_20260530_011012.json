@@ -1,0 +1,148 @@
+[
+  {
+    "timestamp": "2026-05-30T01:09:02.752828",
+    "pipeline_version": "1.0.0",
+    "config_snapshot": {
+      "version": "1.0.0",
+      "mmxm": {
+        "swing_left_neighbors": 2,
+        "swing_right_neighbors": 2,
+        "lookahead_offset_bars": 2,
+        "max_sweep_mss_candles": 5,
+        "max_mss_age_candles": 2,
+        "max_mss_alert_delay_ms": 900000,
+        "fvg_lookback_candles": 8,
+        "fvg_min_start": 2,
+        "order_block_lookback_candles": 10,
+        "order_block_min_body_ratio": 0.25,
+        "min_step_risk_ratio": 0.5,
+        "target_multipliers": [
+          1.5,
+          2.5,
+          4.0
+        ],
+        "max_targets": 3,
+        "min_candles_required": 60,
+        "atr_period": 14,
+        "min_imbalance_price_ratio": 0.0001,
+        "min_imbalance_atr_ratio": 0.02,
+        "min_ob_body_price_ratio": 0.0001,
+        "min_ob_body_atr_ratio": 0.05,
+        "min_risk_price_ratio": 0.0002,
+        "min_risk_atr_ratio": 0.05,
+        "sl_offset_atr_ratio": 0.5,
+        "price_round_decimals": 8,
+        "rr_round_decimals": 2
+      },
+      "indicators": {
+        "ema_default_period": 9,
+        "rsi_period": 14,
+        "atr_period": 14,
+        "macd_fast_period": 12,
+        "macd_slow_period": 26,
+        "macd_signal_period": 9,
+        "volume_zscore_lookback": 20
+      },
+      "screener": {
+        "min_candles_required": 30,
+        "volume_zscore_lookback": 20,
+        "rsi_period": 14,
+        "ema_fast_period": 20,
+        "ema_slow_period": 50,
+        "pump_price_change_pct": 2.0,
+        "dump_price_change_pct": -2.0,
+        "volume_zscore_threshold": 1.8,
+        "rsi_pump_upper_bound": 80.0,
+        "rsi_dump_lower_bound": 20.0,
+        "confidence_score_max": 5,
+        "confidence_high_change_pct": 5.0,
+        "confidence_high_vz": 4.0,
+        "confidence_ema_aligned": true,
+        "confidence_rsi_bound_pump": 65.0,
+        "confidence_rsi_bound_dump": 35.0
+      },
+      "execution": {
+        "bybit_taker_fee_pct": 0.00055,
+        "bybit_maker_fee_pct": 0.0002,
+        "slippage_baseline_pct": 0.0001,
+        "adv_participation_cap": 0.05
+      },
+      "guardrails": {
+        "gr5_max_oos_degradation": 0.5,
+        "gr6_max_pbo": 0.1,
+        "gr7_min_dsr": 0.5,
+        "gr8_max_param_variance": 0.2,
+        "gr9_max_cpcv_dispersion": 0.3,
+        "gr11_slippage_stress_multiple": 3.0,
+        "gr12_max_adv_participation": 0.05,
+        "gr15_max_cvar_daily_vol_multiple": 4.5
+      },
+      "dataset": {
+        "training_start": "2021-01-01T00:00:00Z",
+        "training_end": "2024-06-30T23:59:59Z",
+        "holdout_start": "2024-07-01T00:00:00Z",
+        "holdout_end": "2024-12-31T23:59:59Z",
+        "interval": "1h",
+        "max_symbols": 20,
+        "historical_symbols_path": "backtesting/data/historical_top_symbols.json",
+        "min_candles_per_symbol": 100
+      },
+      "random_seeds": {
+        "cpcv_split": 42,
+        "perturbation": 123,
+        "walk_forward": 777
+      },
+      "holdout_locked": false
+    },
+    "data_hashes": {},
+    "training_date_range": {},
+    "holdout_date_range": {},
+    "strategy_params": {
+      "timeframe": "1h",
+      "max_holding_bars": 20,
+      "order_size_usd": 10000.0,
+      "max_concurrent": 5,
+      "train_bars": 1400
+    },
+    "metrics": {
+      "total_return_pct": 0.0,
+      "annualized_return_pct": 0.0,
+      "annualized_volatility_pct": 0.0,
+      "max_drawdown_pct": 0.0,
+      "max_drawdown_duration_bars": 1400,
+      "value_at_risk_95_pct": 0.0,
+      "sharpe_ratio": 0.0,
+      "sortino_ratio": 0.0,
+      "calmar_ratio": 0.0,
+      "total_trades": 0,
+      "win_rate": 0.0,
+      "avg_win_pct": 0.0,
+      "avg_loss_pct": 0.0,
+      "profit_factor": 0.0,
+      "avg_holding_bars": 0.0,
+      "initial_capital": 100000.0,
+      "final_equity": 100000.0
+    },
+    "cpcv_result": {
+      "n_groups": 5,
+      "train_groups": 2,
+      "sharpe_mean": 0.0,
+      "sharpe_std": 0.0,
+      "pbo": 0.0,
+      "gr5_violation": false,
+      "gr9_violation": false
+    },
+    "gate8_decision": {
+      "passed": false,
+      "sharpe": 0.0,
+      "benchmark_sharpe": -0.19234959991116315,
+      "gr5_pass": false,
+      "gr15_pass": false,
+      "failures": [
+        "Not enough trades: 0 < 5",
+        "Sharpe 0.00 < 0.5"
+      ]
+    },
+    "notes": "Full pipeline: timeframe=1h, synthetic=True"
+  }
+]

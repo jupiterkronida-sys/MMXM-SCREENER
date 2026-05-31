@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useReducer, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useReducer, useMemo, useRef } from "react";
 import {
   getHealth, getSignals, getStats, runScan, getMarketTop, testTelegram,
 } from "../lib/api";

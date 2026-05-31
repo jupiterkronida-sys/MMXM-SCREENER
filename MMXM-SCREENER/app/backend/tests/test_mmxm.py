@@ -23,14 +23,15 @@ def test_find_fvg_prefers_newest_gap():
 def test_find_recent_setup_uses_newest_crossing_candidate():
     candles = [_candle(i) for i in range(30)]
     closes = [c[4] for c in candles]
+    # (idx, price, kind, confirmed_at) — confirmed_at = idx + right(2)
     swings = [
-        (5, 9.0, "L"),
-        (7, 12.0, "H"),
-        (9, 10.0, "L"),
-        (13, 8.0, "L"),
-        (15, 13.0, "H"),
-        (17, 11.0, "L"),
-        (20, 13.0, "H"),
+        (5, 9.0, "L", 7),
+        (7, 12.0, "H", 9),
+        (9, 10.0, "L", 11),
+        (13, 8.0, "L", 15),
+        (15, 13.0, "H", 17),
+        (17, 11.0, "L", 19),
+        (20, 13.0, "H", 22),
     ]
 
     candles[27][3] = 10.8
@@ -48,4 +49,4 @@ def test_find_recent_setup_uses_newest_crossing_candidate():
 
     assert setup["mss_idx"] == 29
     assert setup["sweep_idx"] == 27
-    assert setup["swept_swing"] == (17, 11.0, "L")
+    assert setup["swept_swing"] == (17, 11.0, "L", 19)

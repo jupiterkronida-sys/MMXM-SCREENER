@@ -1,0 +1,103 @@
+# MMXM Screener — Quantitative Parameters
+# Extracted from source code on 2026-05-30.
+# All values come directly from hardcoded literals in mmxm.py, indicators.py, screener.py.
+version: "1.0.0"
+
+mmxm:
+  # Swing detection (from _swings() default args)
+  swing_left_neighbors: 2            # bars left of pivot required for swing confirmation
+  swing_right_neighbors: 2           # bars right of pivot required — defines lookahead offset
+  lookahead_offset_bars: 2           # = swing_right_neighbors — causal lag in backtest
+
+  # Constants (global, lines 19-21)
+  max_sweep_mss_candles: 5           # max candles between sweep and MSS (line 19)
+  max_mss_age_candles: 2             # max age of setup in candles (line 20)
+  max_mss_alert_delay_ms: 900000     # 15 * 60_000 ms — real-time alert cutoff (line 21)
+
+  # FVG detection (from _find_fvg())
+  fvg_lookback_candles: 8            # max candles back to search for FVG (line 61: end_idx - 8)
+  fvg_min_start: 2                   # minimum lookback start offset (line 61: max(2, ...))
+
+  # Order block detection (from _find_order_block())
+  order_block_lookback_candles: 10   # max candles back to find OB (line 76: mss_idx - 10)
+  order_block_min_body_ratio: 0.25   # min body-to-range ratio (line 74: body / candle_range < 0.25)
+
+  # Target ordering (from _ordered_targets())
+  min_step_risk_ratio: 0.5           # minimum step = risk * 0.5 (line 90)
+  target_multipliers: [1.5, 2.5, 4.0]  # fallback TP multipliers (line 103)
+  max_targets: 3                     # target count (line 94, 104, 107)
+
+  # Entry zone parameters (from detect_mmxm())
+  min_candles_required: 60           # minimum candle buffer for detect_mmxm() (line 198)
+  atr_period: 14                     # ATR period used for scaling (line 205)
+  min_imbalance_price_ratio: 0.0001  # min FVG gap = price * 0.0001 (line 232)
+  min_imbalance_atr_ratio: 0.02      # min FVG gap = ATR * 0.02 (line 232)
+  min_ob_body_price_ratio: 0.0001    # min OB body = price * 0.0001 (line 233)
+  min_ob_body_atr_ratio: 0.05        # min OB body = ATR * 0.05 (line 233)
+  min_risk_price_ratio: 0.0002       # min risk = price * 0.0002 (line 249)
+  min_risk_atr_ratio: 0.05           # min risk = ATR * 0.05 (line 249)
+  sl_offset_atr_ratio: 0.5           # SL = swept_swing ± ATR * 0.5 (lines 251, 262)
+
+  # Rounding
+  price_round_decimals: 8            # round(price, 8) for reported values (lines 278-287)
+  rr_round_decimals: 2               # round(risk_reward, 2) (line 285)
+
+indicators:
+  ema_default_period: 9              # from ema() — parameter default (computed: true)
+  rsi_period: 14                     # from rsi() default arg
+  atr_period: 14                     # from atr() default arg
+  macd_fast_period: 12               # from macd() default arg
+  macd_slow_period: 26               # from macd() default arg
+  macd_signal_period: 9              # from macd() default arg
+  volume_zscore_lookback: 20         # from volume_zscore() default arg
+
+screener:
+  min_candles_required: 30           # minimum candle buffer (line 8)
+  volume_zscore_lookback: 20         # passed to volume_zscore() (line 17)
+  rsi_period: 14                     # passed to rsi() (line 18)
+  ema_fast_period: 20                # fast EMA period (line 19)
+  ema_slow_period: 50                # slow EMA period (line 20)
+  pump_price_change_pct: 2.0         # 1h price change % to trigger pump (line 23)
+  dump_price_change_pct: -2.0        # 1h price change % to trigger dump (line 25)
+  volume_zscore_threshold: 1.8       # min volume z-score for signal (lines 23, 25)
+  rsi_pump_upper_bound: 80.0         # RSI must be below this for pump (line 23)
+  rsi_dump_lower_bound: 20.0         # RSI must be above this for dump (line 25)
+  confidence_score_max: 5            # max confidence score (line 40)
+  confidence_high_change_pct: 5.0    # high change threshold +1 (line 33)
+  confidence_high_vz: 4.0            # high vz threshold +1 (line 35)
+  confidence_ema_aligned: true       # EMA alignment check +1 (computed: line 37)
+  confidence_rsi_bound_pump: 65.0    # RSI < 65 for pump +1 (line 38)
+  confidence_rsi_bound_dump: 35.0    # RSI > 35 for dump +1 (line 38)
+
+execution:
+  bybit_taker_fee_pct: 0.00055       # Bybit taker fee (0.055%)
+  bybit_maker_fee_pct: 0.00020       # Bybit maker fee (0.020%)
+  slippage_baseline_pct: 0.0001      # baseline slippage estimate (0.01%)
+  adv_participation_cap: 0.05        # max 5% of ADV per position
+
+guardrails:
+  gr5_max_oos_degradation: 0.50
+  gr6_max_pbo: 0.10
+  gr7_min_dsr: 0.50
+  gr8_max_param_variance: 0.20
+  gr9_max_cpcv_dispersion: 0.30
+  gr11_slippage_stress_multiple: 3.0
+  gr12_max_adv_participation: 0.05
+  gr15_max_cvar_daily_vol_multiple: 4.5
+
+dataset:
+  training_start: "2021-01-01T00:00:00Z"
+  training_end: "2024-06-30T23:59:59Z"
+  holdout_start: "2024-07-01T00:00:00Z"
+  holdout_end: "2024-12-31T23:59:59Z"
+  interval: "1h"
+  max_symbols: 20
+  historical_symbols_path: "backtesting/data/historical_top_symbols.json"
+  min_candles_per_symbol: 100
+
+random_seeds:
+  cpcv_split: 42
+  perturbation: 123
+  walk_forward: 777
+
+holdout_locked: false

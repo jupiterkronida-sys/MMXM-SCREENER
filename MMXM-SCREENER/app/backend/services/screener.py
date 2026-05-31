@@ -15,7 +15,12 @@ def detect_pump_dump(candles: List[List[float]], symbol: str) -> Optional[Dict]:
     pct_change_1h = (last_close - prev_close) / prev_close * 100 if prev_close else 0
 
     vz = volume_zscore(volumes, 20)
-    rsi_val = rsi(closes, 14)[-1]
+    if vz is None:
+        return None
+    rsi_vals = rsi(closes, 14)
+    if rsi_vals is None:
+        return None
+    rsi_val = rsi_vals[-1]
     ema20 = ema(closes, 20)[-1]
     ema50 = ema(closes, 50)[-1] if len(closes) >= 50 else ema20
 

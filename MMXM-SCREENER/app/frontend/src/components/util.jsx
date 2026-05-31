@@ -1,5 +1,3 @@
-import React from "react";
-
 export function Stars({ n }) {
   return (
     <span className="mono" data-testid="confidence-stars">

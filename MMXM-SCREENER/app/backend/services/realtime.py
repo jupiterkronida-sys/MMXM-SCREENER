@@ -30,6 +30,7 @@ class RealtimeEventHub:
         self._lock = asyncio.Lock()
         self._consumer_task: Optional[asyncio.Task] = None
         self._heartbeat_task: Optional[asyncio.Task] = None
+        self._dropped_events: int = 0
         self._running = False
 
     async def start(self):
@@ -115,7 +116,8 @@ class RealtimeEventHub:
         try:
             self._queue.put_nowait(item)
         except asyncio.QueueFull:
-            logger.warning("Realtime queue full; dropping event type=%s", event_type)
+            self._dropped_events += 1
+            logger.warning("Realtime queue full; dropping event type=%s (total dropped=%d)", event_type, self._dropped_events)
 
     async def replay(self, since_seq: Optional[int] = None, since_ts: Optional[int] = None, limit: int = 2000) -> List[Dict[str, Any]]:
         limit = max(1, min(limit, 10000))

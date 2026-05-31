@@ -17,12 +17,10 @@ logger = logging.getLogger(__name__)
 DEDUPE_WINDOW = timedelta(hours=4)
 Publisher = Callable[[str, dict, str], Awaitable[None]]
 
-
 def _signal_key(sig: dict) -> str:
     if sig.get("source") == "mmxm":
         return f"mmxm:{sig['symbol']}:{sig['timeframe']}:{sig['side']}"
     return f"screener:{sig['symbol']}:{sig['kind']}"
-
 
 async def _was_recently_alerted(db, key: str) -> bool:
     cutoff = (datetime.now(timezone.utc) - DEDUPE_WINDOW).isoformat()
@@ -30,7 +28,6 @@ async def _was_recently_alerted(db, key: str) -> bool:
         {"dedupe_key": key, "created_at": {"$gt": cutoff}}, {"_id": 0, "id": 1}
     )
     return doc is not None
-
 
 async def _persist_and_alert(db, sig: dict, publisher: Optional[Publisher] = None):
     key = _signal_key(sig)
@@ -47,7 +44,6 @@ async def _persist_and_alert(db, sig: dict, publisher: Optional[Publisher] = Non
     if publisher:
         await publisher("signal:new", sig, topic="signals")
 
-
 async def _scan_one_symbol(symbol: str) -> List[Dict]:
     out = []
     # Pump / dump on 1h
@@ -59,7 +55,7 @@ async def _scan_one_symbol(symbol: str) -> List[Dict]:
                 res["source"] = "screener"
                 out.append(res)
     except Exception as e:
-        logger.debug(f"pumpdump {symbol}: {e}")
+        logger.warning("pumpdump scan failed for %s: %s", symbol, e)
 
     # MMXM on 4h (HTF) and 1h (LTF)
     for tf in ("4h", "1h"):
@@ -79,9 +75,8 @@ async def _scan_one_symbol(symbol: str) -> List[Dict]:
                 mm["confidence"] = min(conf, 5)
                 out.append(mm)
         except Exception as e:
-            logger.debug(f"mmxm {symbol} {tf}: {e}")
+            logger.warning("mmxm scan failed for %s %s: %s", symbol, tf, e)
     return out
-
 
 async def run_scan(db, publisher: Optional[Publisher] = None) -> Dict:
     started = datetime.now(timezone.utc)
@@ -94,7 +89,6 @@ async def run_scan(db, publisher: Optional[Publisher] = None) -> Dict:
         logger.error(f"top symbols fetch failed: {e}")
         return {"ok": False, "error": str(e)}
 
-    # update universe snapshot
     snapshot = {
         "id": str(uuid.uuid4()),
         "captured_at": started.isoformat(),
@@ -160,7 +154,6 @@ async def run_scan(db, publisher: Optional[Publisher] = None) -> Dict:
         }
         await publisher("health:update", health, topic="health")
     return summary
-
 
 async def scanner_loop(db, publisher: Optional[Publisher] = None):
     interval = int(os.environ.get("SCAN_INTERVAL_SECONDS", 300))

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Stars, fmt, fmtPct, timeAgo } from "./util";
 import { ChevronDown, Crosshair, ShieldAlert, Target, Activity, BarChart3 } from "lucide-react";
 

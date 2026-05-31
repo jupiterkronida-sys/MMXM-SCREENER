@@ -1,12 +1,13 @@
 """Bybit + Gate.io public market-data clients (no auth needed)."""
+import os
 import httpx
 import logging
 from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
-BYBIT_BASE = "https://api.bybit.com"
-GATEIO_BASE = "https://api.gateio.ws/api/v4"
+BYBIT_BASE = os.environ.get("BYBIT_API_BASE", "https://api.bybit.com")
+GATEIO_BASE = os.environ.get("GATEIO_API_BASE", "https://api.gateio.ws/api/v4")
 
 # Map our timeframe strings to exchange interval codes
 BYBIT_INTERVAL = {"15m": "15", "1h": "60", "4h": "240", "1d": "D"}
@@ -19,7 +20,8 @@ async def bybit_top_symbols(limit: int = 60) -> List[Dict]:
     async with httpx.AsyncClient(timeout=20) as c:
         r = await c.get(url, params={"category": "linear"})
         r.raise_for_status()
-        data = r.json().get("result", {}).get("list", [])
+        result = r.json().get("result", {})
+        data = result.get("list", [])
     rows = [
         {
             "symbol": d["symbol"],
@@ -49,19 +51,10 @@ async def bybit_klines(symbol: str, interval: str, limit: int = 200) -> List[Lis
     async with httpx.AsyncClient(timeout=20) as c:
         r = await c.get(url, params=params)
         r.raise_for_status()
-        raw = r.json().get("result", {}).get("list", [])
+        result = r.json().get("result", {})
+        raw = result.get("list", [])
     # Bybit returns newest first -> reverse
-    out = []
-    for row in reversed(raw):
-        out.append([
-            int(row[0]),
-            float(row[1]),
-            float(row[2]),
-            float(row[3]),
-            float(row[4]),
-            float(row[5]),
-        ])
-    return out
+    return _parse_kline_rows(reversed(raw))
 
 
 async def gateio_klines(symbol: str, interval: str, limit: int = 200) -> List[List[float]]:
@@ -74,17 +67,7 @@ async def gateio_klines(symbol: str, interval: str, limit: int = 200) -> List[Li
         if r.status_code != 200:
             return []
         raw = r.json()
-    out = []
-    for row in sorted(raw, key=lambda r: int(r["t"])):
-        out.append([
-            int(row["t"]) * 1000,
-            float(row["o"]),
-            float(row["h"]),
-            float(row["l"]),
-            float(row["c"]),
-            float(row["v"]),
-        ])
-    return out
+    return _parse_kline_rows_gateio(sorted(raw, key=lambda r: int(r["t"])))
 
 
 async def gateio_top_symbols(limit: int = 60) -> List[Dict]:
@@ -119,11 +102,11 @@ async def get_klines(symbol: str, interval: str, limit: int = 200) -> List[List[
         if k and len(k) >= 50:
             return k
     except Exception as e:
-        logger.warning(f"gateio klines fail {symbol} {interval}: {e}")
+        logger.warning("gateio klines fail %s %s: %s", symbol, interval, e)
     try:
         return await bybit_klines(symbol, interval, limit)
     except Exception as e:
-        logger.debug(f"bybit klines fail {symbol} {interval}: {e}")
+        logger.debug("bybit klines fail %s %s: %s", symbol, interval, e)
         return []
 
 
@@ -133,14 +116,42 @@ async def get_top_symbols(limit: int = 60) -> List[Dict]:
         if rows:
             return rows
     except Exception as e:
-        logger.warning(f"gateio top symbols failed: {e}")
+        logger.warning("gateio top symbols failed: %s", e)
     try:
         return await bybit_top_symbols(limit)
     except Exception as e:
-        logger.warning(f"bybit top symbols failed: {e}")
+        logger.warning("bybit top symbols failed: %s", e)
         return []
 
 
 def bybit_ws_kline_interval(app_interval: str) -> str:
     """Map app intervals to Bybit websocket kline interval codes."""
     return {"15m": "15", "1h": "60", "4h": "240", "1d": "D"}.get(app_interval, "60")
+
+
+def _parse_kline_rows(rows) -> List[List[float]]:
+    out = []
+    for row in rows:
+        out.append([
+            int(row[0]),
+            float(row[1]),
+            float(row[2]),
+            float(row[3]),
+            float(row[4]),
+            float(row[5]),
+        ])
+    return out
+
+
+def _parse_kline_rows_gateio(rows) -> List[List[float]]:
+    out = []
+    for row in rows:
+        out.append([
+            int(row["t"]) * 1000,
+            float(row["o"]),
+            float(row["h"]),
+            float(row["l"]),
+            float(row["c"]),
+            float(row["v"]),
+        ])
+    return out

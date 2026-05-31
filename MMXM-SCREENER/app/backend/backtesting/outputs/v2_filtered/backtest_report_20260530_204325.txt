@@ -1,0 +1,43 @@
+============================================================
+  MMXM v2-Filtered (11 symbols, v2_filter=True)
+  Generated: 2026-05-30 20:43:25
+============================================================
+
+--- PERFORMANCE SUMMARY ---
+  Total Return:           -79.42%
+  Annualized Return:     -100.00%
+  Annualized Vol:         256.73%
+
+--- RISK METRICS ---
+  Sharpe Ratio:          -9.1961
+  Sortino Ratio:         -9.5065
+  Calmar Ratio:            -1.24
+  Max Drawdown:            80.34%
+  Max DD Duration:         505 bars
+  VaR (95%):               -1.85%
+
+--- TRADING STATISTICS ---
+  Total Trades:                9
+  Win Rate:                66.67%
+  Avg Win:                  1.08%
+  Avg Loss:                -0.62%
+  Profit Factor:          3.4787
+  Avg Holding:              17.1 bars
+
+--- CAPITAL ---
+  Initial Capital:      $100,000.00
+  Final Equity:         $ 20,580.58
+  Net P&L:              $-79,419.42
+
+--- GATE 8 HOLDOUT EVALUATION ---
+  Decision:             FAIL
+  Holdout Sharpe:        -9.0025
+  Benchmark Sharpe:      -0.1196
+  Sharpe vs Benchmark:    +0.00%
+  GR-5:                 FAIL
+  GR-15:                FAIL
+  Failures:             Not enough trades: 3 < 5; Sharpe -9.00 < 0.5
+
+============================================================
+  End of Report
+============================================================
